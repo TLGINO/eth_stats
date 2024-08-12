@@ -33,10 +33,11 @@ class APIWrapper:
                     continue
 
                 # Functions to run
+                self.get_gas_price(block_data)
                 self.get_withdrawal_data(block_data)
                 self.get_block_transactions(block_data)
 
-                # open("tmp.json", "w+").write(json.dumps(block_data))
+                open("tmp.json", "w+").write(json.dumps(block_data))
 
     def execute_call(self, payload) -> json:
         headers = {"Content-Type": "application/json"}
@@ -59,6 +60,13 @@ class APIWrapper:
                 data_df.to_csv(f, header=False, index=False)
         else:
             data_df.to_csv(f_path, index=False)
+
+    def get_gas_price(self, block_data):
+        gas_price = block_data["baseFeePerGas"]
+
+        df = pd.DataFrame({"gas_price": [gas_price]})
+
+        self.custom_writer("gas_price.csv", df)
 
     def get_block_transactions(self, block_data):
         block_number = block_data["number"]
